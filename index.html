@@ -24,16 +24,16 @@
       /*
       * Recursively print the tree object structure
       */
-      const printTree = async (tree, folder) => {
+      const printTree = async (tree, folder, ignore=false) => {
         let htmlString = '';
         for(blob of tree){
           if(blob['type'] == 'tree'){
             console.log("GETTING CALLED WITH FOLDER:", `${folder}/${blob['path']}`, "AND HTML:",htmlString)
             const treeobj = await getTree(blob['sha'])
             htmlString += `<li class="list-group-item"><i class="far fa-folder"></i> ${blob['path']} <ul class="list-group">`
-            htmlString += await printTree(treeobj, `${folder}/${blob['path']}`, htmlString)
+            htmlString += await printTree(treeobj, `${folder}/${blob['path']}`)
             htmlString += `</ul></li>`
-          }else if(blob['type'] == 'blob')
+          }else if(blob['type'] == 'blob' && !ignore) 
             htmlString += `<li class="list-group-item"><a href="${folder}/${blob['path']}">${blob['path']}</a></li>`;
         }
         return htmlString
@@ -48,7 +48,7 @@
 
         //PRINT THE TREE
         const tree = await getTree(tree_sha)
-        htmlString += await printTree(tree, '')
+        htmlString += await printTree(tree, '', true)
 
         htmlString += '</ul>';
         document.getElementById('root').innerHTML = htmlString;
