@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Raider Arts Press kit browser</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link rel="stylesheet" href="http://use.fontawesome.com/releases/v5.0.7/css/all.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <img src="/images/Alternative_Logo_solid_inverted.png" width="64px" class="float-start mx-2" alt="Raider Arts Logo"/>
+    <h1 class="mt-2">index of press-kit/</h1>
+    <hr>
+    <div id="root" class="px-3"></div>
+    <script>
+      /*
+      * Get the tree obj
+      */
+      const getTree = async (tree_sha) => {
+        response = await fetch(`https://api.github.com/repos/Raider-arts/press-kit/git/trees/${tree_sha}`);
+        return (await response.json())['tree'];
+      }
+      /*
+      * Recursively print the tree object structure
+      */
+      const printTree = async (tree, folder) => {
+        let htmlString = '';
+        for(blob of tree){
+          if(blob['type'] == 'tree'){
+            console.log("GETTING CALLED WITH FOLDER:", `${folder}/${blob['path']}`, "AND HTML:",htmlString)
+            const treeobj = await getTree(blob['sha'])
+            htmlString += `<li class="list-group-item"><i class="far fa-folder"></i> ${blob['path']} <ul class="list-group">`
+            htmlString += await printTree(treeobj, `${folder}/${blob['path']}`, htmlString)
+            htmlString += `</ul></li>`
+          }else if(blob['type'] == 'blob')
+            htmlString += `<li class="list-group-item"><a href="${folder}/${blob['path']}">${blob['path']}</a></li>`;
+        }
+        return htmlString
+      }
+
+      (async () => {
+        let htmlString = '<ul class="list-group">';
+        // GET THE TREE SHA
+        const response = await fetch('https://api.github.com/repos/Raider-arts/press-kit/branches/master');
+        const data = await response.json();
+        const tree_sha = data['commit']['commit']['tree']['sha']
+
+        //PRINT THE TREE
+        const tree = await getTree(tree_sha)
+        htmlString += await printTree(tree, '')
+
+        htmlString += '</ul>';
+        document.getElementById('root').innerHTML = htmlString;
+      })()
+    </script>
+  </body>
+</html>
