@@ -20,6 +20,6 @@ jobs:
           exclusions: '*.git* CNAME *.html *.md'
       - name: Release Kit
         uses: ncipollo/release-action@v1
-          with:
-            artifacts: "raider-press-kit.zip"
-            token: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          artifacts: "raider-press-kit.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
