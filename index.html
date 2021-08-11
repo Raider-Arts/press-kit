@@ -51,11 +51,11 @@
           if(blob['type'] == 'tree'){
             console.log("GETTING CALLED WITH FOLDER:", `${folder}/${blob['path']}`, "AND HTML:",htmlString)
             const treeobj = await getTree(blob['sha'])
-            htmlString += `<li class="list-group-item"><i class="far fa-folder"></i> ${blob['path']} <ul class="list-group">`
+            htmlString += `<li class="list-group-item overflow-hidden"><i class="far fa-folder"></i> ${blob['path']} <ul class="list-group">`
             htmlString += await printTree(treeobj, `${folder}/${blob['path']}`)
             htmlString += `</ul></li>`
           }else if(blob['type'] == 'blob' && !ignore) 
-            htmlString += `<li class="list-group-item"><a href="${folder}/${blob['path']}">${blob['path']}</a></li>`;
+            htmlString += `<li class="list-group-item overflow-hidden"><a href="${folder}/${blob['path']}">${blob['path']}</a></li>`;
         }
         return htmlString
       }
