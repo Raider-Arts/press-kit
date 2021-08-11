@@ -11,8 +11,19 @@
     <img src="images/Alternative_Logo_solid_inverted.png" width="64px" class="float-start mx-2" alt="Raider Arts Logo"/>
     <h1 class="mt-2">index of press-kit/</h1>
     <hr>
-    <div id="root" class="px-3"></div>
-    <script>
+    <div class="container">
+      <div class="row align-items-start">
+        <div class="col-8">
+          <div id="root" class="px-3"></div>
+        </div>
+        <div class="col">
+          <h3>Kit Release</h3>
+          <div id="releases"></div>
+        </div>
+      </div>
+    </div>
+    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+    <script> 
       const root_url = 'press-kit'
       /*
       * Get the tree obj
@@ -22,11 +33,21 @@
         return (await response.json())['tree'];
       }
       /*
+      * Get releases list
+      */
+      const getLatestRelease = async () => {
+        response = await fetch(`https://api.github.com/repos/Raider-arts/press-kit/releases/latest`);
+        return (await response.json());
+      }
+      /*
       * Recursively print the tree object structure
       */
       const printTree = async (tree, folder, ignore=false) => {
         let htmlString = '';
         for(blob of tree){
+          //ignore file or folders that start with a dot
+          if(blob['path'].search(/^\./gm) != -1)
+            continue
           if(blob['type'] == 'tree'){
             console.log("GETTING CALLED WITH FOLDER:", `${folder}/${blob['path']}`, "AND HTML:",htmlString)
             const treeobj = await getTree(blob['sha'])
@@ -52,6 +73,26 @@
 
         htmlString += '</ul>';
         document.getElementById('root').innerHTML = htmlString;
+
+        //add release
+        const release = await getLatestRelease()
+        const posted = dayjs(release['assets'][0]['updated_at'])
+        console.log(release)
+        document.getElementById('releases').innerHTML = `
+        <div class="card mb-3" style="max-width: 540px;">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <i class="far fa-file-archive fa-7x p-3"></i>
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">${release['assets'][0]['name']}</h5>
+                <a href="${release['assets'][0]['browser_download_url']}" class="btn btn-primary">Download</a>
+                <p class="card-text"><small class="text-muted">Last updated ${posted.format('DD/MM/YYYY HH:mm')}</small></p>
+              </div>
+            </div>
+          </div>
+        </div>`;
       })()
     </script>
   </body>
