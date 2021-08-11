@@ -1,0 +1,25 @@
+on:
+  push:
+    tags:
+      - v* # Push events to v* tags
+
+name: Create Release Press-kit
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'raider-press-kit.zip'
+          exclusions: '*.git* CNAME *.html *.md'
+      - name: Release Kit
+        uses: ncipollo/release-action@v1
+          with:
+            artifacts: "raider-press-kit.zip"
+            token: ${{ secrets.GITHUB_TOKEN }}
