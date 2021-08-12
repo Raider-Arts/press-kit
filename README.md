@@ -1,5 +1,7 @@
-# Raider Arts Press Kit
-
+ # <img src="https://press-kit.raiderarts.net/images/logo_solid_inverted.png" alt="raider-logo" width="32"/> Raider Arts Press Kit
+<p align="center">
+<img src="https://press-kit.raiderarts.net/images/logo.svg" align="center" alt="raider-logo" width="256"/>
+</p>
 Press kit for the Raider Arts brand
 
 All the logos are trademark of Raider Arts and can be used accordigly with the Branding Guidelines outlined below
